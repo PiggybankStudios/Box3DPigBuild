@@ -126,43 +126,107 @@ Description:
 	"[ROOT]/shared/utils.h",               \
 }
 
-#define SAMPLE_FILES {                       \
-	"[ROOT]/samples/main.cpp",               \
-	/*Host*/                                 \
-	"[ROOT]/samples/host/camera.cpp",        \
-	"[ROOT]/samples/host/camera.h",          \
-	"[ROOT]/samples/host/gui.cpp",           \
-	"[ROOT]/samples/host/gui.h",             \
-	"[ROOT]/samples/host/imgui_impl.cpp",    \
-	"[ROOT]/samples/host/sokol_app_impl.c",  \
-	"[ROOT]/samples/sample.cpp",             \
-	"[ROOT]/samples/sample.h",               \
-	"[ROOT]/samples/mesh_loader.cpp",        \
-	"[ROOT]/samples/mesh_loader.h",          \
-	"[ROOT]/samples/jsmn.h",                 \
-	"[ROOT]/samples/tiny_obj_loader.h",      \
-	"[ROOT]/samples/earcut.h",               \
-	/*Samples*/                              \
-	"[ROOT]/samples/sample_benchmark.cpp",   \
-	"[ROOT]/samples/sample_bodies.cpp",      \
-	"[ROOT]/samples/sample_character.cpp",   \
-	"[ROOT]/samples/sample_collision.cpp",   \
-	"[ROOT]/samples/sample_compound.cpp",    \
-	"[ROOT]/samples/sample_continuous.cpp",  \
-	"[ROOT]/samples/sample_determinism.cpp", \
-	"[ROOT]/samples/sample_events.cpp",      \
-	"[ROOT]/samples/sample_geometry.cpp",    \
-	"[ROOT]/samples/sample_issues.cpp",      \
-	"[ROOT]/samples/sample_joint.cpp",       \
-	"[ROOT]/samples/sample_manifold.cpp",    \
-	"[ROOT]/samples/sample_mesh.cpp",        \
-	"[ROOT]/samples/sample_ragdoll.cpp",     \
-	"[ROOT]/samples/sample_replay.cpp",      \
-	"[ROOT]/samples/sample_robustness.cpp",  \
-	"[ROOT]/samples/sample_shapes.cpp",      \
-	"[ROOT]/samples/sample_stacking.cpp",    \
-	"[ROOT]/samples/sample_tree.cpp",        \
-	"[ROOT]/samples/sample_world.cpp",       \
+#if BUILDING_ON_WINDOWS
+#define NFD_SOURCE_PATH "nfd/src/nfd_win.cpp"
+#elif BUILDING_ON_LINUX
+// #define NFD_SOURCE_PATH "nfd_gtk.cpp"
+#define NFD_SOURCE_PATH "nfd/src/nfd_portal.cpp"
+#elif BUILDING_ON_OSX
+#define NFD_SOURCE_PATH "nfd/src/nfd_cocoa.m"
+#endif
+
+#define SAMPLE_FILES {                        \
+	"[ROOT]/samples/main.cpp",                \
+	/*Host*/                                  \
+	"[ROOT]/samples/host/camera.cpp",         \
+	"[ROOT]/samples/host/camera.h",           \
+	"[ROOT]/samples/host/gui.cpp",            \
+	"[ROOT]/samples/host/gui.h",              \
+	"[ROOT]/samples/host/imgui_impl.cpp",     \
+	"[ROOT]/samples/host/sokol_app_impl.c",   \
+	"[ROOT]/samples/sample.cpp",              \
+	"[ROOT]/samples/sample.h",                \
+	"[ROOT]/samples/mesh_loader.cpp",         \
+	"[ROOT]/samples/mesh_loader.h",           \
+	"[ROOT]/samples/jsmn.h",                  \
+	"[ROOT]/samples/tiny_obj_loader.h",       \
+	"[ROOT]/samples/earcut.h",                \
+	/*GFX_FILES*/                             \
+	"[ROOT]/samples/gfx/arena.c",             \
+	"[ROOT]/samples/gfx/arena.h",             \
+	"[ROOT]/samples/gfx/debug_adapter.c",     \
+	"[ROOT]/samples/gfx/debug_adapter.h",     \
+	"[ROOT]/samples/gfx/debug_shapes.c",      \
+	"[ROOT]/samples/gfx/debug_shapes.h",      \
+	"[ROOT]/samples/gfx/draw_overlay.h",      \
+	"[ROOT]/samples/gfx/draw.c",              \
+	"[ROOT]/samples/gfx/draw.h",              \
+	"[ROOT]/samples/gfx/edges.c",             \
+	"[ROOT]/samples/gfx/edges.h",             \
+	"[ROOT]/samples/gfx/geometry_registry.c", \
+	"[ROOT]/samples/gfx/geometry_registry.h", \
+	"[ROOT]/samples/gfx/gtao.c",              \
+	"[ROOT]/samples/gfx/gtao.h",              \
+	"[ROOT]/samples/gfx/highlight_mask.c",    \
+	"[ROOT]/samples/gfx/highlight_mask.h",    \
+	"[ROOT]/samples/gfx/highlight_outline.c", \
+	"[ROOT]/samples/gfx/highlight_outline.h", \
+	"[ROOT]/samples/gfx/highlight_target.c",  \
+	"[ROOT]/samples/gfx/highlight_target.h",  \
+	"[ROOT]/samples/gfx/ibl.c",               \
+	"[ROOT]/samples/gfx/ibl.h",               \
+	"[ROOT]/samples/gfx/overlay.c",           \
+	"[ROOT]/samples/gfx/overlay.h",           \
+	"[ROOT]/samples/gfx/projection.h",        \
+	"[ROOT]/samples/gfx/qsort.h",             \
+	"[ROOT]/samples/gfx/renderer.c",          \
+	"[ROOT]/samples/gfx/renderer.h",          \
+	"[ROOT]/samples/gfx/scene_target.c",      \
+	"[ROOT]/samples/gfx/scene_target.h",      \
+	"[ROOT]/samples/gfx/shadow.c",            \
+	"[ROOT]/samples/gfx/shadow.h",            \
+	"[ROOT]/samples/gfx/sky.c",               \
+	"[ROOT]/samples/gfx/sky.h",               \
+	"[ROOT]/samples/gfx/sokol_impl.c",        \
+	"[ROOT]/samples/gfx/text.c",              \
+	"[ROOT]/samples/gfx/text.h",              \
+	"[ROOT]/samples/gfx/tone_map.c",          \
+	"[ROOT]/samples/gfx/tone_map.h",          \
+	"[ROOT]/samples/gfx/utility.h",           \
+	/*Samples*/                               \
+	"[ROOT]/samples/sample_benchmark.cpp",    \
+	"[ROOT]/samples/sample_bodies.cpp",       \
+	"[ROOT]/samples/sample_character.cpp",    \
+	"[ROOT]/samples/sample_collision.cpp",    \
+	"[ROOT]/samples/sample_compound.cpp",     \
+	"[ROOT]/samples/sample_continuous.cpp",   \
+	"[ROOT]/samples/sample_determinism.cpp",  \
+	"[ROOT]/samples/sample_events.cpp",       \
+	"[ROOT]/samples/sample_geometry.cpp",     \
+	"[ROOT]/samples/sample_issues.cpp",       \
+	"[ROOT]/samples/sample_joint.cpp",        \
+	"[ROOT]/samples/sample_manifold.cpp",     \
+	"[ROOT]/samples/sample_mesh.cpp",         \
+	"[ROOT]/samples/sample_ragdoll.cpp",      \
+	"[ROOT]/samples/sample_replay.cpp",       \
+	"[ROOT]/samples/sample_robustness.cpp",   \
+	"[ROOT]/samples/sample_shapes.cpp",       \
+	"[ROOT]/samples/sample_stacking.cpp",     \
+	"[ROOT]/samples/sample_tree.cpp",         \
+	"[ROOT]/samples/sample_world.cpp",        \
+	/*Dear Imgui*/                            \
+    "imgui/imgui.cpp",                        \
+    "imgui/imgui_draw.cpp",                   \
+    "imgui/imgui_tables.cpp",                 \
+    "imgui/imgui_widgets.cpp",                \
+    "imgui/imgui_demo.cpp",                   \
+    /*ImPlot*/                                \
+    "implot/implot.cpp",                      \
+    "implot/implot_items.cpp",                \
+    "implot/implot_demo.cpp",                 \
+    "implot/implot.h",                        \
+    "implot/implot_internal.h",               \
+    NFD_SOURCE_PATH,                          \
 }
 
 #if DEBUG_BUILD
@@ -219,13 +283,25 @@ bool IsCppExt(Str pathStr)
 		StrAnyCaseEquals(extension, StrLit(".mm"))
 	);
 }
+bool IsObjectiveCExt(Str pathStr)
+{
+	Str extension = GetFileExtPart(pathStr, false);
+	return (
+		StrAnyCaseEquals(extension, StrLit(".m")) ||
+		StrAnyCaseEquals(extension, StrLit(".mm"))
+	);
+}
 
-void MakeSureObjectIsBuilt(Str sourcePath, Str objectPath, CliArgs* compilerFlags, StrArray* commonTags, const char* extraTag)
+void BuildObjectIfNeeded(Str sourcePath, Str objectPath, CliArgs* compilerFlags, StrArray* commonTags, const char* extraTag)
 {
 	if (!ONLY_BUILD_NON_EXISTANT_OBJS || !DoesFileExist(objectPath))
 	{
 		Str sourceFileName = GetFileNamePart(sourcePath, true);
 		PrintLine("[Compiling... %.*s -> %.*s]", StrPrint(sourceFileName), StrPrint(objectPath));
+		
+		bool isCpp = IsCppExt(sourceFileName);
+		bool isObjectiveC = IsObjectiveCExt(sourceFileName);
+		if (StrAnyCaseEquals(sourceFileName, StrLit("sokol_impl.c"))) { isObjectiveC = true; }
 		
 		CliArgs args = EMPTY;
 		AddArgStr(&args, CLI_QUOTED_ARG, sourcePath);
@@ -238,7 +314,7 @@ void MakeSureObjectIsBuilt(Str sourcePath, Str objectPath, CliArgs* compilerFlag
 		StrArray tags = EMPTY;
 		AddTag(&tags, T_OBJECT);
 		if (extraTag != nullptr) { AddTag(&tags, extraTag); }
-		AddTag(&tags, IsCppExt(sourceFileName) ? T_LANG_CPP : T_LANG_C);
+		AddTag(&tags, isObjectiveC ? (isCpp ? T_LANG_OBJECTIVECPP : T_LANG_OBJECTIVEC) : (isCpp ? T_LANG_CPP : T_LANG_C));
 		AddStrArray(&tags, commonTags);
 		IF_WINDOWS(AddTag(&tags, T_MSVC_CL));
 		IF_WINDOWS(AddTag(&tags, T_MSVC_CL_OR_LINK));
@@ -289,6 +365,8 @@ int main(int argc, char* argv[])
 	
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_SAMPLES, CLANG_INCLUDE_DIR, "[ROOT]/samples");
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_SAMPLES, CL_INCLUDE_DIR,    "[ROOT]/samples");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_SAMPLES, CLANG_INCLUDE_DIR, "[ROOT]/samples/shaders/generated");
+	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_SAMPLES, CL_INCLUDE_DIR,    "[ROOT]/samples/shaders/generated");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_SAMPLES, CLANG_INCLUDE_DIR, "[ROOT]/extern/sokol");
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_SAMPLES, CL_INCLUDE_DIR,    "[ROOT]/extern/sokol");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_SAMPLES, CLANG_INCLUDE_DIR, "imgui");
@@ -305,13 +383,16 @@ int main(int argc, char* argv[])
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_BOX3D_DLL, CL_DEFINE,    "box3d_EXPORTS");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_BOX3D_DLL, CLANG_DEFINE, "box3d_EXPORTS");
 	
-	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_LANG_C,          CL_LANG_VERSION, "c17");
-	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_C,          CLANG_LANG_VERSION, "gnu17");
-	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVEC, CLANG_LANG_VERSION, "gnu17");
-	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_LANG_CPP,        CL_LANG_VERSION, "c++20");
-	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_CPP,        CLANG_LANG_VERSION, "c++20");
-	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_CPP,        CLANG_SYSTEM_LIBRARY, "stdc++");
-	AddTaggedArg(&compilerFlags,    T_CLANG   T_LANG_OBJECTIVEC, CLANG_ENABLE_OBJC_ARC);
+	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_LANG_C,            CL_LANG_VERSION, "c17");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_C,            CLANG_LANG_VERSION, "gnu17");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVEC,   CLANG_LANG_VERSION, "gnu17");
+	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_LANG_CPP,          CL_LANG_VERSION, "c++20");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_CPP,          CLANG_LANG_VERSION, "c++20");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_CPP,          CLANG_SYSTEM_LIBRARY, "stdc++");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVEC,   CLANG_LANGUAGE, "objective-c");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVECPP, CLANG_LANGUAGE, "objective-c++");
+	AddTaggedArg(&compilerFlags,    T_CLANG   T_LANG_OBJECTIVEC,   CLANG_ENABLE_OBJC_ARC);
+	AddTaggedArg(&compilerFlags,    T_CLANG   T_LANG_OBJECTIVECPP, CLANG_ENABLE_OBJC_ARC);
 	
 	AddTaggedArg(&compilerFlags,    T_MSVC_CL T_DEBUG_BUILD,        CL_DEBUG_INFO);
 	AddTaggedArg(&compilerFlags,    T_MSVC_CL T_DEBUG_BUILD,        CL_STD_LIB_DYNAMIC_DBG);
@@ -328,6 +409,8 @@ int main(int argc, char* argv[])
 	// AddTaggedArgNt(&compilerFlags,  T_MSVC_CL, CL_WARNING_LEVEL, "4");
 	// AddTaggedArgNt(&compilerFlags,  T_CLANG,   CLANG_WARNING_LEVEL, "all");
 	// AddTaggedArgNt(&compilerFlags,  T_CLANG,   CLANG_WARNING_LEVEL, "extra");
+	
+	AddTaggedArgNt(&linkerFlags,  T_MSVC_LINK T_WINDOWS T_SAMPLES,  CLI_QUOTED_ARG, "Ole32.lib"); //Required for things like CoInitializeEx which nfd depends on
 	
 	StrArray commonTags = EMPTY;
 	IF_DEBUG(AddTag(&commonTags, "DEBUG_BUILD"));
@@ -347,7 +430,7 @@ int main(int argc, char* argv[])
 		if (IsCompilableExt(sourcePath))
 		{
 			Str objectPath = ChangePathExtension(GetFileNamePart(sourcePath, true), StrLit(OBJ_EXT), true);
-			MakeSureObjectIsBuilt(sourcePath, objectPath, &compilerFlags, &commonTags, nullptr);
+			BuildObjectIfNeeded(sourcePath, objectPath, &compilerFlags, &commonTags, nullptr);
 			AddStr(&sharedObjectPaths, objectPath);
 		}
 	}
@@ -364,7 +447,7 @@ int main(int argc, char* argv[])
 		if (IsCompilableExt(sourcePath))
 		{
 			Str objectPath = ChangePathExtension(GetFileNamePart(sourcePath, true), StrLit(OBJ_EXT), true);
-			MakeSureObjectIsBuilt(sourcePath, objectPath, &compilerFlags, &commonTags, T_BOX3D_DLL);
+			BuildObjectIfNeeded(sourcePath, objectPath, &compilerFlags, &commonTags, T_BOX3D_DLL);
 			AddStr(&dllObjectPaths, objectPath);
 		}
 	}
@@ -381,7 +464,7 @@ int main(int argc, char* argv[])
 		if (IsCompilableExt(sourcePath))
 		{
 			Str objectPath = ChangePathExtension(GetFileNamePart(sourcePath, true), StrLit(OBJ_EXT), true);
-			MakeSureObjectIsBuilt(sourcePath, objectPath, &compilerFlags, &commonTags, T_SAMPLES);
+			BuildObjectIfNeeded(sourcePath, objectPath, &compilerFlags, &commonTags, T_SAMPLES);
 			AddStr(&samplesObjectPaths, objectPath);
 		}
 	}
