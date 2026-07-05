@@ -350,7 +350,7 @@ int main(int argc, char* argv[])
 	CliArgs compilerFlags = EMPTY;
 	CliArgs linkerFlags = EMPTY;
 	AddTaggedArg(&compilerFlags,    T_MSVC_CL, CL_FULL_FILE_PATHS);
-	AddTaggedArg(&compilerFlags,    T_MSVC_CL, CL_NO_LOGO);
+	AddTaggedArg(&compilerFlags,    T_MSVC_CL_OR_LINK, CL_NO_LOGO);
 	AddTaggedArg(&linkerFlags,      T_MSVC_CL, LINK_DISABLE_INCREMENTAL);
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL, CL_CONFIGURE_EXCEPTION_HANDLING, "s"); //enable stack-unwinding
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL, CL_CONFIGURE_EXCEPTION_HANDLING, "c"); //extern "C" functions don't through exceptions
