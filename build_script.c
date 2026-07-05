@@ -9,7 +9,7 @@ Description:
 #include "pig_build.h"
 
 #define DEBUG_BUILD                  1
-#define BUILD_BOX3D_DLL              0
+#define BUILD_BOX3D_DLL              1
 #define BUILD_SAMPLES                1
 #define ONLY_BUILD_NON_EXISTANT_OBJS 0
 
@@ -301,15 +301,16 @@ void BuildObjectIfNeeded(Str sourcePath, Str objectPath, CliArgs* compilerFlags,
 		
 		bool isCpp = IsCppExt(sourceFileName);
 		bool isObjectiveC = IsObjectiveCExt(sourceFileName);
+		if (StrAnyCaseEquals(sourceFileName, StrLit("sokol_app_impl.c"))) { isObjectiveC = true; }
 		if (StrAnyCaseEquals(sourceFileName, StrLit("sokol_impl.c"))) { isObjectiveC = true; }
 		
 		CliArgs args = EMPTY;
-		AddArgStr(&args, CLI_QUOTED_ARG, sourcePath);
 		AddTaggedArg(&args, T_MSVC_CL, CL_COMPILE);
 		AddTaggedArg(&args, T_CLANG,   CLANG_COMPILE);
 		AddTaggedArgStr(&args, T_MSVC_CL, CL_OBJ_FILE, objectPath);
 		AddTaggedArgStr(&args, T_CLANG,   CLANG_OUTPUT_FILE, objectPath);
 		AddArgList(&args, compilerFlags);
+		AddArgStr(&args, CLI_QUOTED_ARG, sourcePath);
 		
 		StrArray tags = EMPTY;
 		AddTag(&tags, T_OBJECT);
@@ -319,6 +320,7 @@ void BuildObjectIfNeeded(Str sourcePath, Str objectPath, CliArgs* compilerFlags,
 		IF_WINDOWS(AddTag(&tags, T_MSVC_CL));
 		IF_WINDOWS(AddTag(&tags, T_MSVC_CL_OR_LINK));
 		IF_NOT_WINDOWS(AddTag(&tags, T_CLANG));
+		if (StrAnyCaseStartsWith(sourceFileName, StrLit("nfd_"))) { AddTag(&tags, "|nfd"); }
 		
 		Str compilerExe = BUILDING_ON_WINDOWS ? StrLit(EXE_MSVC_CL) : StrLit(EXE_CLANG);
 		RunCliProgramAndExitOnFailureTags(compilerExe, tags, &args, FormatStr("Failed to compile \"%.*s\"", StrPrint(sourceFileName)));
@@ -379,6 +381,7 @@ int main(int argc, char* argv[])
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_WINDOWS,   CL_DEFINE,    "SOKOL_D3D11");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LINUX,     CLANG_DEFINE, "SOKOL_GLCORE");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_OSX,       CLANG_DEFINE, "SOKOL_METAL");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_OSX,       CLANG_DEFINE, "NFD_MACOS_ALLOWEDCONTENTTYPES=1");
 	
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_BOX3D_DLL, CL_DEFINE,    "box3d_EXPORTS");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_BOX3D_DLL, CLANG_DEFINE, "box3d_EXPORTS");
@@ -389,10 +392,11 @@ int main(int argc, char* argv[])
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_LANG_CPP,          CL_LANG_VERSION, "c++20");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_CPP,          CLANG_LANG_VERSION, "c++20");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_CPP,          CLANG_SYSTEM_LIBRARY, "stdc++");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVECPP, CLANG_SYSTEM_LIBRARY, "stdc++");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVEC,   CLANG_LANGUAGE, "objective-c");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVECPP, CLANG_LANGUAGE, "objective-c++");
-	AddTaggedArg(&compilerFlags,    T_CLANG   T_LANG_OBJECTIVEC,   CLANG_ENABLE_OBJC_ARC);
-	AddTaggedArg(&compilerFlags,    T_CLANG   T_LANG_OBJECTIVECPP, CLANG_ENABLE_OBJC_ARC);
+	AddTaggedArg(&compilerFlags,    T_CLANG   T_LANG_OBJECTIVEC   "|nfd==false",   CLANG_ENABLE_OBJC_ARC);
+	AddTaggedArg(&compilerFlags,    T_CLANG   T_LANG_OBJECTIVECPP "|nfd==false", CLANG_ENABLE_OBJC_ARC);
 	
 	AddTaggedArg(&compilerFlags,    T_MSVC_CL T_DEBUG_BUILD,        CL_DEBUG_INFO);
 	AddTaggedArg(&compilerFlags,    T_MSVC_CL T_DEBUG_BUILD,        CL_STD_LIB_DYNAMIC_DBG);
@@ -409,8 +413,20 @@ int main(int argc, char* argv[])
 	// AddTaggedArgNt(&compilerFlags,  T_MSVC_CL, CL_WARNING_LEVEL, "4");
 	// AddTaggedArgNt(&compilerFlags,  T_CLANG,   CLANG_WARNING_LEVEL, "all");
 	// AddTaggedArgNt(&compilerFlags,  T_CLANG,   CLANG_WARNING_LEVEL, "extra");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG,   CLANG_DISABLE_WARNING, "unused-command-line-argument"); //warning: -Z-reserved-lib-stdc++: 'linker' input unused
+	AddTaggedArgNt(&compilerFlags,  T_CLANG,   CLANG_DISABLE_WARNING, "deprecated-enum-enum-conversion"); //warning: bitwise operation between different enumeration types ('ImGuiButtonFlags_' and 'ImGuiButtonFlagsPrivate_') is deprecated
 	
 	AddTaggedArgNt(&linkerFlags,  T_MSVC_LINK T_WINDOWS T_SAMPLES,  CLI_QUOTED_ARG, "Ole32.lib"); //Required for things like CoInitializeEx which nfd depends on
+	
+	// AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "CoreText"); //For functions like CTFontCollectionCreateMatchingFontDescriptors in os_font.h OsReadPlatformFont
+	AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "Foundation");
+	AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "Cocoa");
+	AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "QuartzCore");
+	// AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "CoreFoundation");
+	AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "Metal");
+	AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "MetalKit");
+	AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "AppKit"); //required for nfd
+	AddTaggedArgNt(&linkerFlags, T_CLANG T_OSX T_SAMPLES, CLANG_FRAMEWORK, "UniformTypeIdentifiers");
 	
 	StrArray commonTags = EMPTY;
 	IF_DEBUG(AddTag(&commonTags, "DEBUG_BUILD"));
