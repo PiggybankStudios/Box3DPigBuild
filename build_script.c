@@ -334,6 +334,7 @@ int main(int argc, char* argv[])
 	RecompileIfNeeded(StrArray_Empty);
 	#if BUILDING_ON_WINDOWS
 	bool isMsvcInitialized = WasMsvcDevBatchRun();
+	InitializeMsvcIf(StrLit(PIG_BUILD_ROOT), &isMsvcInitialized);
 	#endif
 	const char* sharedPathsNt[] = BOX3D_SHARED_FILES;
 	const char* dllSourcePathsNt[] = BOX3D_SOURCE_FILES;
