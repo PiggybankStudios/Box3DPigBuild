@@ -6,6 +6,7 @@ Description:
 	** A PigBuild-based build script for Box3D (https://github.com/erincatto/box3d)
 */
 
+#define PIG_BUILD_PRINT_SYS_CMDS 0
 #include "pig_build.h"
 
 #define DEBUG_BUILD                  1
@@ -391,8 +392,10 @@ int main(int argc, char* argv[])
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVEC,   CLANG_LANG_VERSION, "gnu17");
 	AddTaggedArgNt(&compilerFlags,  T_MSVC_CL T_LANG_CPP,          CL_LANG_VERSION, "c++20");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_CPP,          CLANG_LANG_VERSION, "c++20");
-	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_CPP,          CLANG_SYSTEM_LIBRARY, "stdc++");
-	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVECPP, CLANG_SYSTEM_LIBRARY, "stdc++");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG T_WINDOWS T_LANG_CPP,          CLANG_SYSTEM_LIBRARY, "stdc++");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG T_LINUX   T_LANG_CPP,          CLANG_SYSTEM_LIBRARY, "stdc++");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG T_OSX     T_LANG_CPP,          CLANG_SYSTEM_LIBRARY, "c++");
+	AddTaggedArgNt(&compilerFlags,  T_CLANG T_OSX     T_LANG_OBJECTIVECPP, CLANG_SYSTEM_LIBRARY, "c++");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVEC,   CLANG_LANGUAGE, "objective-c");
 	AddTaggedArgNt(&compilerFlags,  T_CLANG   T_LANG_OBJECTIVECPP, CLANG_LANGUAGE, "objective-c++");
 	AddTaggedArg(&compilerFlags,    T_CLANG   T_LANG_OBJECTIVEC   "|nfd==false",   CLANG_ENABLE_OBJC_ARC);
@@ -501,6 +504,7 @@ int main(int argc, char* argv[])
 		AddTaggedArgStr(&args, T_CLANG,     CLANG_OUTPUT_FILE, box3dDllPath);
 		AddArgList(&args, &compilerFlags);
 		AddArgList(&args, &linkerFlags);
+		AddTaggedArgNt(&args, T_CLANG,     CLANG_LANGUAGE, "none");
 		for (u64 oIndex = 0; oIndex < sharedObjectPaths.length; oIndex++) { AddArgStr(&args, CLI_QUOTED_ARG, sharedObjectPaths.strings[oIndex]); }
 		for (u64 oIndex = 0; oIndex < dllObjectPaths.length; oIndex++) { AddArgStr(&args, CLI_QUOTED_ARG, dllObjectPaths.strings[oIndex]); }
 		
@@ -508,6 +512,7 @@ int main(int argc, char* argv[])
 		AddTag(&tags, T_LIBRARY);
 		AddTag(&tags, T_BOX3D_DLL);
 		AddStrArray(&tags, &commonTags);
+		AddTag(&tags, BUILDING_ON_OSX ? T_LANG_OBJECTIVECPP : T_LANG_CPP);
 		IF_WINDOWS(AddTag(&tags, T_MSVC_LINK));
 		IF_WINDOWS(AddTag(&tags, T_MSVC_CL_OR_LINK));
 		IF_NOT_WINDOWS(AddTag(&tags, T_CLANG));
@@ -534,6 +539,7 @@ int main(int argc, char* argv[])
 		AddTaggedArgStr(&args, T_CLANG,     CLANG_OUTPUT_FILE, samplesExePath);
 		AddArgList(&args, &compilerFlags);
 		AddArgList(&args, &linkerFlags);
+		AddTaggedArgNt(&args, T_CLANG,     CLANG_LANGUAGE, "none");
 		for (u64 oIndex = 0; oIndex < sharedObjectPaths.length; oIndex++) { AddArgStr(&args, CLI_QUOTED_ARG, sharedObjectPaths.strings[oIndex]); }
 		for (u64 oIndex = 0; oIndex < samplesObjectPaths.length; oIndex++) { AddArgStr(&args, CLI_QUOTED_ARG, samplesObjectPaths.strings[oIndex]); }
 		AddArgStr(&args, CLI_QUOTED_ARG, box3dLibPath);
@@ -542,6 +548,7 @@ int main(int argc, char* argv[])
 		AddTag(&tags, T_LIBRARY);
 		AddTag(&tags, T_SAMPLES);
 		AddStrArray(&tags, &commonTags);
+		AddTag(&tags, BUILDING_ON_OSX ? T_LANG_OBJECTIVECPP : T_LANG_CPP);
 		IF_WINDOWS(AddTag(&tags, T_MSVC_LINK));
 		IF_WINDOWS(AddTag(&tags, T_MSVC_CL_OR_LINK));
 		IF_NOT_WINDOWS(AddTag(&tags, T_CLANG));
